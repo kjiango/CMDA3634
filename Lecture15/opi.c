@@ -22,10 +22,12 @@ int main(int argc, char **argv){
 
   // Q2c: add an OpenMP parallel region here, wherein each thread initializes 
   //      one entry in drandData using srand48_r and seed based on thread number
-#pragma omp parallel {
-  long int seed = 0;
-  srand48_r(seed, drandData+0);
-}
+#pragma omp parallel
+  {
+  int rank = omp_get_thread_num();
+  long int seed = rank;
+  srand48_r(seed, drandData+rank);
+  }
   
   do{
     int Ninnertests=10000;
@@ -34,7 +36,8 @@ int main(int argc, char **argv){
     // Q2d: add an OpenMP parallel for directive here
     //      to split this loop amongst the 10 threads
     //      [ add a reduction clauss for the Ninside variable ]
-    for(int n=0;n<Ninnertests;++n){
+#pragma omp parallel for reduction(+:Ninside)
+    for(int n = 0; n < Ninnertests; ++n){
       double x, y;
       ++test;
       
@@ -42,19 +45,17 @@ int main(int argc, char **argv){
       drand48_r(drandData+0, &x);
       drand48_r(drandData+0, &y);
       
-      if(x*x+y*y<1){
+      if(x*x + y*y<1){
         ++Ninside;
       }
     }
-
     newPi = Ninside/(double)test;
     printf("newPi = %lf\n", 4.*newPi);
-  }while(fabs(newPi-estPi)>tol);
+  }while(fabs(newPi-estPi) > tol);
 
   printf("\n");
   printf("estPi = %lf\n", 4.*newPi);
 
   free(drandData);
-
   return 0;
 }
