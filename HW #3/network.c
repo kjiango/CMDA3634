@@ -101,6 +101,9 @@ Network mpi_networkReader(char* filename){
       count++;
     }while(temp != EOF);
 
+    /**
+      The following for loop was intended to determine the ranks of each nodes and populate them into processor arrays proce_source and proc_dest.  The values were then incremented to determine the size of each processor.
+     */
     for(i = 0; i < g.nodes; i++) {
       int *sent = (int*)malloc(sizeof(int));
       sent[0] = g.connectCount[i];
@@ -124,6 +127,7 @@ Network mpi_networkReader(char* filename){
       } */
     fclose(fp);
 
+    /* Sending the data to each respective processor */
     if(rank != 0) {
       MPI_Send(g.source, count, MPI_INT, rank, 1, MPI_COMM_WORLD);
       MPI_Send(g.dest, count, MPI_INT, rank, 2, MPI_COMM_WORLD);
