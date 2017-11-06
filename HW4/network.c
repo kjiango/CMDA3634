@@ -124,6 +124,7 @@ double updatePageRank(Network net) {
   double L;
   double PR;
 
+#pragma omp parallel for
   for(i = 0; i < net.nodes; i++) {
     for(j = net.offset[i]; j < net.offset[i+1]; j++) {
       dest = net.dest[j];
@@ -156,6 +157,7 @@ void computePageRank(Network net) {
   }
   while(diff > tol) {
     /* Set all new PR values to constant */
+  #pragma omp parallel for reduction(+:diff)
     for(k = 0; k < net.nodes; k++) {
       net.newPageRank[k] = constant;
     }
@@ -195,6 +197,9 @@ int main(int argc, char** argv) {
 
   // Reads the filename of the data file
   char* filename = argv[1];
+  int n_threads = 4;
+
+  omp_set_num_threads(n_threads);
 
   //Start your code
   Network net = networkReader(filename);
