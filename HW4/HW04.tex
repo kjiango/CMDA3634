@@ -1,0 +1,189 @@
+\documentclass{article}
+
+%% preamble
+\usepackage{hyperref}
+\usepackage{verbatim}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+\topmargin 0pt
+\advance \topmargin by -\headheight
+\advance \topmargin by -\headsep
+\textheight 9.in
+\oddsidemargin 0pt
+\evensidemargin \oddsidemargin
+\marginparwidth 0.5in
+\textwidth 6.5in
+\newcommand{\myhrule}{ \begin{center}\rule{.9\linewidth}{.25mm}\end{center} }
+\definecolor{darkgray}{rgb}{0.95,0.95,0.95}
+\definecolor{heavygray}{rgb}{0.05,0.05,0.05}
+\definecolor{foo}{rgb}{.8,0,.8}
+\newcommand{\pad}{\vspace{8pt}\noindent}
+\newcommand{\red}[1]{{\color{red}#1\color{black}}}
+\newcommand{\myhref}[2]{\href{#1}{\color{foo}\underline{#2}\color{black}}}
+
+
+
+
+\begin{document}
+
+\title{CMDA 3634 Fall 2017 Homework 04}
+
+%% change this to your name
+\author{Kevin Jiang}
+\vspace{-64pt}\maketitle
+\begin{center}\underline{You must complete the following task by 11:59pm on 11/07/17.}\end{center}
+Your write up for this homework should be presented in a {\LaTeX} formatted PDF document. You may copy the \LaTeX{} used to prepare this report as follows
+
+\begin{enumerate}
+\item Click on this  \myhref{https://www.sharelatex.com/project/59ee4adaf41d5451ffb9844c}{link} 
+\item Click on Menu/Copy Project.
+\item Modify the HW04.tex document to respond to the following questions. 
+\item Remember: click the Recompile button to rebuild the document when you have made edits.
+\item Remember: Change the author 
+\item Instructions for assignment referred to in {\bf Q1} and {\bf Q2} available on Canvas.
+\end{enumerate}
+
+\pad \emph{Each student} must individually upload the following files to the CMDA 3634 Canvas page at \myhref{https://canvas.vt.edu}{https://canvas.vt.edu}
+
+\begin{enumerate}
+\item \verb|firstnameLastnameHW04.tex| {\LaTeX} file.
+\item Any figure files to be included by \verb|firstnameLastnameHW04.tex| file.
+\item \verb|firstnameLastnameHW04.pdf| PDF file.
+\item \verb|ompMandelbrot.c| and \verb|opi.c| text file with student code. 
+\item \verb|network.c| text file with student code (if you choose to attempt the extra credit).
+\end{enumerate}
+
+
+
+\pad Other notes:
+\begin{enumerate}
+    \item If you are attempting the extra credit problem, a \verb|network.c| serial code is available on the course GitHub repository. Note this program only takes one input, the data file, and prints the PageRank of all nodes.
+\end{enumerate}
+
+\pad You must complete this assignment on your own. 
+
+\vspace{16pt}
+\begin{center}
+\underline{\bf 60 points will be awarded for a successful completion.}
+\vspace{8pt}\underline{\bf Extra credit will be awarded as appropriate.}
+\end{center}
+
+\newpage
+
+
+
+
+\pad {\bf Q1} {\it (30 points) Computing Pi in Parallel with OpenMP.}
+\vspace{8pt} 
+
+\noindent 30 points will be awarded for attending class on October 18th and completing the ``computing pi in parallel using OpenMP'' assignment. Follow the instructions in the assignment PDF closely (available on Canvas). Remember to push the code to a L15 sub directory in a repository that Dr. Warburton and William Winter have access to. (NOTE: If you have already shared a private repository with tcew and wmwinter, you do not need to share a new directory. A L15 sub-directory in the already shared course repository will suffice.) 
+
+\vspace{1em}
+
+
+\noindent Copy and paste the contents of the batch script file used to submit a job to newriver into your \LaTeX{} report. Submit code to canvas (as well as pushing code to your GitHub repository). \\
+
+Script code:
+
+\begin{verbatim}
+#! /bin/bash                                                                    
+#                                                                               
+#PBS -l walltime=00:05:00                                                       
+#PBS -l nodes=1:ppn=12                                                          
+#PBS -W group_list=hokiespeed                                                   
+#PBS -q normal_q                                                                
+#PBS -j oe                                                                      
+cd $PBS_O_WORKDIR
+
+module purge
+module load gcc
+gcc -o opi opi.c -lm -fopenmp
+\end{verbatim}
+
+\myhrule
+
+\pad {\bf Q2} {\it (30 points) Generating Mandelbrot Sets in Parallel with OpenMP.}
+\vspace{8pt} 
+
+\noindent 30 points will be awarded for attending class on October 23rd and submitting ``adding threading to a Mandelbrot set generator'' code to GitHub. Follow the instructions in the assignment PDF closely. Remember to push the code to a L16 sub directory in a repository that Dr. Warburton and William Winter have access to. (NOTE: If you have already shared a private repository with tcew and wmwinter, you do not need to share a new directory. A L16 sub-directory in the already shared course repository will suffice.) 
+
+\vspace{1em}
+
+\noindent Copy and paste the contents of the batch script used to run on newRiver. Present scaling study results in a table in your \LaTeX report. Plot results in a graph and include the graph in your \LaTeX{} report. (Review homework 1 tex code for help including graphics in \LaTeX). If you choose to attempt the extra credit portion, present the strong scaling study results in the same manner (table and figure in \LaTeX{} report). Submit code to canvas (as well as pushing code to a GitHub repository). \\
+
+Script code:
+
+\begin{verbatim}
+#! /bin/bash                                                                    
+#                                                                               
+#PBS -l walltime=00:05:00                                                       
+#PBS -l nodes=1:ppn=12                                                          
+#PBS -W group_list=hokiespeed                                                   
+#PBS -q normal_q                                                                
+#PBS -j oe                                                                      
+cd $PBS_O_WORKDIR
+
+module purge
+module load gcc
+gcc -O3 -o mandelbrot mandelbrot.c png_util.c -I. -lpng -lm -fopenmp
+
+for n in {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}
+do
+./mandelbrot 4096 4096 $n
+done
+\end{verbatim}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.2]{mandelbrot.png}
+    \caption{Mandelbrot graph}
+    \label{fig:mandelbrot}
+\end{figure}
+
+\myhrule
+
+
+
+\pad {\bf Q3: Extra Credit} {\it (60 points) Making the PageRank Algorithm Parallel with OpenMP.} 
+\vspace{1em}
+
+
+\noindent A \verb|network.c| serial code is available on the course GitHub repository. You are free to modify the \verb|network.c| code to add the desired functionality to complete this extra credit task. 
+\vspace{1em}
+
+
+\noindent There are two main areas where the PageRank algorithm can be parallelized. These two areas are in the method performing the PageRank update and in the method computing \texttt{diff}. 
+
+\vspace{8pt}
+
+\pad {\bf 1:} {\it (10 points) Setup.}
+\vspace{8pt} \\
+\noindent Add an include statement to include the OpenMP library header file. In the main method, set the number of threads OpenMP uses to be 4. 
+
+
+\vspace{4pt}
+
+\pad {\bf 2:} {\it (25 points) Parallelizing the Update Method.}
+\vspace{8pt} \\
+\noindent Add a parallel for loop pragma to the outer for loop in the \texttt{updatePageRank} method. Be mindful of the variables: makes variables private as necessary.
+
+
+The \texttt{updatePageRank} method may look strange to you. Some additional work is done in the \texttt{networkReader} method to set up an efficient update method that will not cause conflicts when parallelized with openMP. (Extra extra credit will be provided to students who read through the code, summarize what it is doing, and explaining what type of issue this update strategy avoids and why it sucessfully avoids such issue(s).)
+
+\vspace{4pt}
+
+\pad {\bf 3:} {\it (25 points) Parallelizing the Compute Diff Method.}
+\vspace{8pt} \\
+\noindent Add a parallel for loop pragma to the \texttt{computeDiff} method.  You will need to add a reduction clause to ensure the method computes \texttt{diff} correctly.
+
+\myhrule
+
+
+%%\begin{thebibliography}{9}
+
+%%\end{thebibliography}
+
+
+\end{document}
