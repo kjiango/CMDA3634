@@ -17,6 +17,7 @@ To create an image with 4096 x 4096 pixels (last argument will be used to set nu
 #include "png_util.h"
 
 // Q2a: add include for CUDA header file here:
+#include "cuda.h"
 
 #define MXITER 1000
 
@@ -28,7 +29,7 @@ typedef struct {
 }complex_t;
 
 // return iterations before z leaves mandelbrot set for given c
-int testpoint(complex_t c){
+__device__ int testpoint(complex_t c){
 
   int iter;
   complex_t z;
@@ -36,13 +37,13 @@ int testpoint(complex_t c){
   
   z = c;
   
-  for(iter=0; iter<MXITER; iter++){  
+  for(iter = 0; iter < MXITER; iter++){  
     temp = (z.r*z.r) - (z.i*z.i) + c.r;
     
     z.i = z.r*z.i*2. + c.i;
     z.r = temp;
     
-    if((z.r*z.r+z.i*z.i)>4.0){
+    if((z.r*z.r+z.i*z.i) > 4.0){
       return iter;
     }
   }
@@ -51,19 +52,15 @@ int testpoint(complex_t c){
 
 // perform Mandelbrot iteration on a grid of numbers in the complex plane
 // record the  iteration counts in the count array
-void mandelbrot(int Nre, int Nim, complex_t cmin, complex_t dc, float *count){ 
+__global__ void mandelbrot(int Nre, int Nim, complex_t cmin, complex_t dc, float *count){ 
 
   // Q2c: replace this loop with a CUDA kernel
-  for(int n=0;n<Nim;++n){
-    for(int m=0;m<Nre;++m){
-      complex_t c;
+  complex_t c;
 
-      c.r = cmin.r + dc.r*m;
-      c.i = cmin.i + dc.i*n;
-      
-      count[m+n*Nre] = (float) testpoint(c);
-    }
-  }
+  c.r = cmin.r + dc.r*m;
+  c.i = cmin.i + dc.i*n;
+     
+  count[m+n*Nre] = (float) testpoint(c);
 }
 
 int main(int argc, char **argv){
@@ -76,10 +73,12 @@ int main(int argc, char **argv){
   int Nthreads = atoi(argv[3]);
 
   // Q2b: set the number of threads per block and the number of blocks here:
-  
+  int N = Nre*Nim;
+  int blocks = (N + Nthreads-1)/Nthreads;
+
   // storage for the iteration counts
   float *count;
-  count = (float*) malloc(Nre*Nim*sizeof(float));
+  count = (float*)malloc(Nre*Nim*sizeof(float));
 
   // Parameters for a bounding box for "c" that generates an interesting image
   const float centRe = -.759856, centIm= .125547;
