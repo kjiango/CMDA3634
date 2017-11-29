@@ -86,7 +86,7 @@ int main(int argc, char **argv){
   float *count;
   float *device_count;
   count = (float*)malloc(Nre*Nim*sizeof(float));
-  device_count = cudaMalloc(&count, Nre*Nim*sizeof(float));
+  device_count = (float*)cudaMalloc(&device_count, Nre*Nim*sizeof(float));
 
   // Parameters for a bounding box for "c" that generates an interesting image
   const float centRe = -.759856, centIm = .125547;
