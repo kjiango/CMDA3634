@@ -1,4 +1,4 @@
-/* 
+x/* 
 
 To compile:
 
@@ -84,7 +84,9 @@ int main(int argc, char **argv){
 
   // storage for the iteration counts
   float *count;
+  float *device_count;
   count = (float*)malloc(Nre*Nim*sizeof(float));
+  cudaMalloc(&device_count, Nre*Nim*sizeof(float));
 
   // Parameters for a bounding box for "c" that generates an interesting image
   const float centRe = -.759856, centIm= .125547;
@@ -106,14 +108,16 @@ int main(int argc, char **argv){
   clock_t start = clock(); //start time in CPU cycles
 
   // compute mandelbrot set
-  mandelbrot(Nre, Nim, cmin, dc, count); 
+  mandelbrot <<<Nthreads, Nblocks>>> (Nre, Nim, cmin, dc, count); 
   
   // copy from the GPU back to the host here
+  cudaMemcpy(count, device_count, Nre*Nim*sizeof(double), cudaMemcpyDeviceToHost);
 
   clock_t end = clock(); //start time in CPU cycles
   
   // print elapsed time
   printf("elapsed = %f\n", ((double)(end-start))/CLOCKS_PER_SEC);
+  
 
   // output mandelbrot to png format image
   FILE *fp = fopen("mandelbrot.png", "w");
