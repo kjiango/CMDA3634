@@ -56,11 +56,18 @@ __global__ void mandelbrot(int Nre, int Nim, complex_t cmin, complex_t dc, float
 
   // Q2c: replace this loop with a CUDA kernel
   complex_t c;
+  int thread = thread.Idx.x;
+  int block = block.Idx;
+  int blockSize = blockDim.x;
+  int id = block*blockSize + thread;
+
+  int m = id%Nre; // real axis
+  int n = id%Nim; // imag axis
 
   c.r = cmin.r + dc.r*m;
   c.i = cmin.i + dc.i*n;
      
-  count[m+n*Nre] = (float) testpoint(c);
+  count[m + n*Nre] = (float) testpoint(c);
 }
 
 int main(int argc, char **argv){
@@ -73,8 +80,7 @@ int main(int argc, char **argv){
   int Nthreads = atoi(argv[3]);
 
   // Q2b: set the number of threads per block and the number of blocks here:
-  int N = Nre*Nim;
-  int blocks = (N + Nthreads-1)/Nthreads;
+  int Nblocks = (Nre*Nim + Nthreads-1)/Nthreads;
 
   // storage for the iteration counts
   float *count;
