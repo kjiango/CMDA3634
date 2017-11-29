@@ -56,8 +56,8 @@ __global__ void mandelbrot(int Nre, int Nim, complex_t cmin, complex_t dc, float
 
   // Q2c: replace this loop with a CUDA kernel
   complex_t c;
-  int thread = thread.Idx.x;
-  int block = block.Idx.x;
+  int thread = threadIdx.x;
+  int block = blockIdx.x;
   int blockSize = blockDim.x;
   int id = block*blockSize + thread;
 
