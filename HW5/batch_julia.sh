@@ -13,7 +13,7 @@ module load cuda
 #
 nvcc -O3 -o julia -arch=sm_60 cudaJulia.cu png_util.c -I. -lpng -lm
 #
-./julia 4096 4096 64
+./julia 4096 4096 512
 #
 rm julia
 #
