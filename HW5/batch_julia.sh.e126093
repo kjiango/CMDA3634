@@ -1,0 +1,3 @@
+/home/kjiang/.bashrc: line 1: PS1: command not found
+/opt/torque/torque/spool/mom_priv/jobs/126093.master.cluster.SC: line 20: unexpected EOF while looking for matching `"'
+/opt/torque/torque/spool/mom_priv/jobs/126093.master.cluster.SC: line 21: syntax error: unexpected end of file
