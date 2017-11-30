@@ -86,7 +86,7 @@ int main(int argc, char **argv){
   float *count;
   float *device_count;
   count = (float*)malloc(Nre*Nim*sizeof(float));
-  device_count = (float*)cudaMalloc(&count, Nre*Nim*sizeof(float));
+  cudaMalloc(&device_count, Nre*Nim*sizeof(float));
 
   // Parameters for a bounding box for "c" that generates an interesting image
   const float centRe = -.759856, centIm = .125547;
@@ -111,7 +111,7 @@ int main(int argc, char **argv){
   mandelbrot <<<Nthreads, Nblocks>>> (Nre, Nim, cmin, dc, count); 
   
   // copy from the GPU back to the host here
-  cudaMemcpy(count, device_count, Nre*Nim*sizeof(double), cudaMemcpyDeviceToHost);
+  cudaMemcpy(count, device_count, Nre*Nim*sizeof(float), cudaMemcpyDeviceToHost);
 
   clock_t end = clock(); //start time in CPU cycles
   
