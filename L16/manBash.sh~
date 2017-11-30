@@ -1,0 +1,10 @@
+cd $PBS_O_WORKDIR
+
+module purge
+module load gcc
+gcc mandelbrot.c -o mandelbrot -fopenmp
+
+for n in {1,2,4,8,16,20}
+do
+./mandelbrot 4096 4096 $n 
+done
