@@ -15,9 +15,9 @@ nvcc -O3 -o mandelbrot -arch=sm_60 mandelbrot.cu png_util.c -I. -lpng -lm
 #
 ./mandelbrot 4096 4096 32
 ./mandelbrot 4096 4096 64
-./mandelbrot 4096 4096 128
-./mandelbrot 4096 4096 256
-./mandelbrot 4096 4096 512
+#./mandelbrot 4096 4096 128
+#./mandelbrot 4096 4096 256
+#./mandelbrot 4096 4096 512
 #
 rm mandelbrot
 #

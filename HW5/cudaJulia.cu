@@ -95,8 +95,8 @@ int main(int argc, char **argv){
   cudaMalloc(&device_count, Nre*Nim*sizeof(float));
 
   // Parameters for a bounding box for "c" that generates an interesting image
-  const float centRe = -1.6, centIm = 1.6;
-  const float diam = 3.141592;
+  const float centRe = 0, centIm = 0;
+  const float diam = 1.2;
 
   complex_t zmin; 
   complex_t zmax;
