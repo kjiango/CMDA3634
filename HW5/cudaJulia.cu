@@ -35,7 +35,7 @@ __device__ int testpoint(complex_t c, complex_t z){
 
   int iter;
   double temp;
-  
+
   z = c;
   
   for(iter = 0; iter < MXITER; iter++){  
