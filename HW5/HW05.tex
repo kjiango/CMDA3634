@@ -195,13 +195,30 @@ Julia output:
     Printing julia.png...done.
 \end{verbatim}
 
-nvprof was unable to detect a cuda application for some odd reason, as shown below:
-\begin{figure}[h!]
-    \centering
-    \includegraphics[scale=1]{nvprof_error.png}
-    \caption{Sceenshot capture of the error message}
-    \label{fig:nvprof_error}
-\end{figure}
+nvprof output:
+\begin{verbatim}
+    [kjiang@nr159 HW5]$ nvprof ./julia 4096 4096 32
+    ==50577== NVPROF is profiling process 50577, command: ./julia 4096 4096 32
+    elapsed = 0.020000
+    Printing julia.png...done.
+    ==50577== Profiling application: ./julia 4096 4096 32
+    ==50577== Profiling result:
+    Time(%)      Time     Calls       Avg       Min       Max  Name
+    100.00%  21.454ms         1  21.454ms  21.454ms  21.454ms  [CUDA memcpy DtoH]
+    
+    ==50577== API calls:
+    Time(%)      Time     Calls       Avg       Min       Max  Name
+     92.26%  271.79ms         1  271.79ms  271.79ms  271.79ms  cudaMalloc
+      7.51%  22.137ms         1  22.137ms  22.137ms  22.137ms  cudaMemcpy
+      0.11%  316.94us         1  316.94us  316.94us  316.94us  cuDeviceTotalMem
+      0.10%  299.87us        91  3.2950us     126ns  109.52us  cuDeviceGetAttribute
+      0.01%  24.940us         1  24.940us  24.940us  24.940us  cuDeviceGetName
+      0.00%  3.8410us         6     640ns     188ns  2.0320us  cudaSetupArgument
+      0.00%  3.0740us         1  3.0740us  3.0740us  3.0740us  cudaLaunch
+      0.00%  2.6820us         3     894ns     200ns  2.0730us  cuDeviceGetCount
+      0.00%  1.3320us         1  1.3320us  1.3320us  1.3320us  cudaConfigureCall
+      0.00%     898ns         3     299ns     190ns     475ns  cuDeviceGet
+\end{verbatim}
 
 \myhrule
 
@@ -210,20 +227,42 @@ nvprof was unable to detect a cuda application for some odd reason, as shown bel
 
 \noindent Run CUDA memcheck on your CUDA Mandelbrot and CUDA Julia code from \textbf{Q1} and \textbf{Q2} code. (For full credit, there should be no memory errors.) Copy the output into your report. (Hint: Use \LaTeX{}'s verbatim environment.) \\
 
+After performing a cuda-memcheck on both files, I only come up with 1 error for a call to cudaLaunch.
+
 Mandelbrot memory check:
 \begin{verbatim}
-    [kjiang@nrlogin1 HW5]$ cuda-memcheck mandelbrot.cu
+    [kjiang@nr159 HW5]$ cuda-memcheck ./mandelbrot 4096 4096 32
     ========= CUDA-MEMCHECK
-    ========= mandelbrot.cu: Permission denied
-    ========= ERROR SUMMARY: 0 errors
+    ========= Program hit cudaErrorInvalidConfiguration (error 9) due to "invalid configuration argument" on CUDA API call to cudaLaunch. 
+    =========     Saved host backtrace up to driver entry point at error
+    =========     Host Frame:/lib64/libcuda.so.1 [0x2ef343]
+    =========     Host Frame:./mandelbrot [0x376be]
+    =========     Host Frame:./mandelbrot [0x36b7]
+    =========     Host Frame:./mandelbrot [0x3306]
+    =========     Host Frame:/lib64/libc.so.6 (__libc_start_main + 0xf5) [0x21b15]
+    =========     Host Frame:./mandelbrot [0x343d]
+    =========
+    elapsed = 0.020000
+    Printing mandelbrot.png...done.
+    ========= ERROR SUMMARY: 1 error
 \end{verbatim}
 
 Julia memory check:
 \begin{verbatim}
-    [kjiang@nrlogin1 HW5]$ cuda-memcheck cudaJulia.cu 
+    [kjiang@nr159 HW5]$ cuda-memcheck ./julia 4096 4096 32
     ========= CUDA-MEMCHECK
-    ========= cudaJulia.cu: Permission denied
-    ========= ERROR SUMMARY: 0 errors
+    ========= Program hit cudaErrorInvalidConfiguration (error 9) due to "invalid configuration argument" on CUDA API call to cudaLaunch. 
+    =========     Saved host backtrace up to driver entry point at error
+    =========     Host Frame:/lib64/libcuda.so.1 [0x2ef343]
+    =========     Host Frame:./julia [0x3771e]
+    =========     Host Frame:./julia [0x3715]
+    =========     Host Frame:./julia [0x331f]
+    =========     Host Frame:/lib64/libc.so.6 (__libc_start_main + 0xf5) [0x21b15]
+    =========     Host Frame:./julia [0x344d]
+    =========
+    elapsed = 0.020000
+    Printing julia.png...done.
+    ========= ERROR SUMMARY: 1 error
 \end{verbatim}
 
 
