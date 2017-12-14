@@ -10,7 +10,8 @@ init()
 source("mcpi.r")
 
 # Number of total points to use
-n.pts <- 1e7
+# n.pts <- 1e7
+n.pts <- 1e5
 # Number of points per rank
 n.ranks <- comm.size()
 #n.pts <- n.pts/n.ranks
