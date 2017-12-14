@@ -13,6 +13,8 @@ source("mcpi.r")
 n.pts <- 1e7
 # Number of points per rank
 n.ranks <- comm.size()
+#n.pts <- n.pts/n.ranks
+n.pts <- n.pts*n.ranks
 n.pts.rank <- ceiling(n.pts / n.ranks)
 
 comm.print(paste('running pbdMPI version with n.pts = ',n.pts,' and nranks = ',n.ranks,' (',n.pts.rank,' pts per rank) \n'))
