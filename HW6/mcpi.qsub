@@ -1,0 +1,23 @@
+#PBS -ACMDA3634
+
+cd $PBS_O_WORKDIR
+
+#load R and R-parallel
+module purge
+module load intel mkl R/3.2.0
+module load openmpi hdf5 netcdf R-parallel/3.2.0
+
+#run the serial version
+#Rscript run_mcpi.r
+
+#run the parallel version with parRapply
+#Rscript mcpi_parallel_apply.r
+
+#run the parallel version with mclapply
+#Rscript mcpi_parallel_mc.r
+
+#run the pbdr version
+for i in {1..16}
+do
+mpiexec -np $i Rscript mcpi_pbdr.r
+done
